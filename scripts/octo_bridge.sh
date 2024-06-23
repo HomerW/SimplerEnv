@@ -1,13 +1,18 @@
-
+# baseline gs://multi-robot-bucket2/runs/octo/bridge_baseline_20240602_005223
+# ours gs://rail-tpus-homer-v5/log/octo/cross_embodiment_oxe_droid_final_20240604_185941
 
 gpu_id=0
 declare -a policy_models=(
 "octo-small"
-"octo-base"
+# "octo-base"
 # "octo-server"
 )
 
-ckpt_path=None
+ckpt_path="gs://rail-tpus-homer-v5/log/octo/cross_embodiment_oxe_droid_final_20240604_185941"
+step="230000"
+
+# ckpt_path=None
+# step=300000
 
 scene_name=bridge_table_1_v1
 robot=widowx
@@ -15,7 +20,8 @@ rgb_overlay_path=ManiSkill2_real2sim/data/real_inpainting/bridge_real_eval_1.png
 robot_init_x=0.147
 robot_init_y=0.028
 
-for init_rng in 0 2 4;
+# for init_rng in 0 2 4;
+for init_rng in 0;
 
 do for policy_model in "${policy_models[@]}";
 
@@ -26,7 +32,8 @@ do CUDA_VISIBLE_DEVICES=${gpu_id} python simpler_env/main_inference.py --policy-
   --rgb-overlay-path ${rgb_overlay_path} \
   --robot-init-x ${robot_init_x} ${robot_init_x} 1 --robot-init-y ${robot_init_y} ${robot_init_y} 1 --obj-variation-mode episode --obj-episode-range 0 24 \
   --robot-init-rot-quat-center 0 0 0 1 --robot-init-rot-rpy-range 0 0 1 0 0 1 0 0 1 \
-  --additional-env-save-tags octo_init_rng_${init_rng};
+  --additional-env-save-tags octo_init_rng_${init_rng} \
+  --step ${step};
 
 CUDA_VISIBLE_DEVICES=${gpu_id} python simpler_env/main_inference.py --policy-model ${policy_model} --ckpt-path ${ckpt_path} \
   --robot ${robot} --policy-setup widowx_bridge --octo-init-rng ${init_rng} \
@@ -35,7 +42,8 @@ CUDA_VISIBLE_DEVICES=${gpu_id} python simpler_env/main_inference.py --policy-mod
   --rgb-overlay-path ${rgb_overlay_path} \
   --robot-init-x ${robot_init_x} ${robot_init_x} 1 --robot-init-y ${robot_init_y} ${robot_init_y} 1 --obj-variation-mode episode --obj-episode-range 0 24 \
   --robot-init-rot-quat-center 0 0 0 1 --robot-init-rot-rpy-range 0 0 1 0 0 1 0 0 1 \
-  --additional-env-save-tags octo_init_rng_${init_rng};
+  --additional-env-save-tags octo_init_rng_${init_rng} \
+  --step ${step};
 
 CUDA_VISIBLE_DEVICES=${gpu_id} python simpler_env/main_inference.py --policy-model ${policy_model} --ckpt-path ${ckpt_path} \
   --robot ${robot} --policy-setup widowx_bridge --octo-init-rng ${init_rng} \
@@ -44,7 +52,8 @@ CUDA_VISIBLE_DEVICES=${gpu_id} python simpler_env/main_inference.py --policy-mod
   --rgb-overlay-path ${rgb_overlay_path} \
   --robot-init-x ${robot_init_x} ${robot_init_x} 1 --robot-init-y ${robot_init_y} ${robot_init_y} 1 --obj-variation-mode episode --obj-episode-range 0 24 \
   --robot-init-rot-quat-center 0 0 0 1 --robot-init-rot-rpy-range 0 0 1 0 0 1 0 0 1 \
-  --additional-env-save-tags octo_init_rng_${init_rng};
+  --additional-env-save-tags octo_init_rng_${init_rng} \
+  --step ${step};
 
 done
 
@@ -60,7 +69,8 @@ rgb_overlay_path=ManiSkill2_real2sim/data/real_inpainting/bridge_sink.png
 robot_init_x=0.127
 robot_init_y=0.06
 
-for init_rng in 0 2 4;
+# for init_rng in 0 2 4;
+for init_rng in 0;
 
 do for policy_model in "${policy_models[@]}";
 
@@ -71,7 +81,8 @@ do CUDA_VISIBLE_DEVICES=${gpu_id} python simpler_env/main_inference.py --policy-
   --rgb-overlay-path ${rgb_overlay_path} \
   --robot-init-x ${robot_init_x} ${robot_init_x} 1 --robot-init-y ${robot_init_y} ${robot_init_y} 1 --obj-variation-mode episode --obj-episode-range 0 24 \
   --robot-init-rot-quat-center 0 0 0 1 --robot-init-rot-rpy-range 0 0 1 0 0 1 0 0 1 \
-  --additional-env-save-tags octo_init_rng_${init_rng};
+  --additional-env-save-tags octo_init_rng_${init_rng} \
+  --step ${step};
 
 done
 

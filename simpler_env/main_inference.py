@@ -5,8 +5,8 @@ import tensorflow as tf
 
 from simpler_env.evaluation.argparse import get_args
 from simpler_env.evaluation.maniskill2_evaluator import maniskill2_evaluator
-from simpler_env.policies.octo.octo_server_model import OctoServerInference
-from simpler_env.policies.rt1.rt1_model import RT1Inference
+# from simpler_env.policies.octo.octo_server_model import OctoServerInference
+# from simpler_env.policies.rt1.rt1_model import RT1Inference
 
 try:
     from simpler_env.policies.octo.octo_model import OctoInference
@@ -21,13 +21,14 @@ if __name__ == "__main__":
     os.environ["DISPLAY"] = ""
     # prevent a single jax process from taking up all the GPU memory
     os.environ["XLA_PYTHON_CLIENT_PREALLOCATE"] = "false"
-    gpus = tf.config.list_physical_devices("GPU")
-    if len(gpus) > 0:
-        # prevent a single tf process from taking up all the GPU memory
-        tf.config.set_logical_device_configuration(
-            gpus[0],
-            [tf.config.LogicalDeviceConfiguration(memory_limit=args.tf_memory_limit)],
-        )
+    # gpus = tf.config.list_physical_devices("GPU")
+    # if len(gpus) > 0:
+    #     # prevent a single tf process from taking up all the GPU memory
+    #     tf.config.set_logical_device_configuration(
+    #         gpus[0],
+    #         [tf.config.LogicalDeviceConfiguration(memory_limit=args.tf_memory_limit)],
+    #     )
+    tf.config.set_visible_devices([], "GPU")
 
     # policy model creation; update this if you are using a new policy model
     if args.policy_model == "rt1":
@@ -47,9 +48,22 @@ if __name__ == "__main__":
                 action_scale=args.action_scale,
             )
         else:
+            if "cross_embodiment" in args.ckpt_path or "baseline" in args.ckpt_path:
+                head_name = "single_arm"
+                image_size = 224
+                horizon = 5
+            else:
+                head_name = "action"
+                image_size = 256
+                horizon = 2
+
             model = OctoInference(
                 model_type=args.ckpt_path,
+                step=args.step,
                 policy_setup=args.policy_setup,
+                horizon=horizon,
+                head_name=head_name,
+                image_size=image_size,
                 init_rng=args.octo_init_rng,
                 action_scale=args.action_scale,
             )
@@ -59,4 +73,5 @@ if __name__ == "__main__":
     # run real-to-sim evaluation
     success_arr = maniskill2_evaluator(model, args)
     print(args)
+    print(success_arr)
     print(" " * 10, "Average success", np.mean(success_arr))

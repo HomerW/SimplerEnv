@@ -27,3 +27,6 @@ dist/
 .vscode
 
 imgui.ini
+
+*.mp4
+*.png

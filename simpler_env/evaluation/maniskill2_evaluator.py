@@ -15,6 +15,7 @@ from simpler_env.utils.visualization import write_video
 def run_maniskill2_eval_single_episode(
     model,
     ckpt_path,
+    step,
     robot_name,
     env_name,
     scene_name,
@@ -130,7 +131,7 @@ def run_maniskill2_eval_single_episode(
             print(task_description)
         is_final_subtask = env.is_final_subtask()
 
-        print(timestep, info)
+        # print(timestep, info)
 
         image = get_image_from_maniskill2_obs_dict(env, obs, camera_name=obs_camera_name)
         images.append(image)
@@ -158,7 +159,7 @@ def run_maniskill2_eval_single_episode(
     else:
         rgb_overlay_path_str = "None"
     r, p, y = quat2euler(robot_init_quat)
-    video_path = f"{ckpt_path_basename}/{scene_name}/{control_mode}/{env_save_name}/rob_{robot_init_x}_{robot_init_y}_rot_{r:.3f}_{p:.3f}_{y:.3f}_rgb_overlay_{rgb_overlay_path_str}/{video_name}"
+    video_path = f"{ckpt_path_basename}/{step}/{scene_name}/{control_mode}/{env_save_name}/rob_{robot_init_x}_{robot_init_y}_rot_{r:.3f}_{p:.3f}_{y:.3f}_rgb_overlay_{rgb_overlay_path_str}/{video_name}"
     video_path = os.path.join(logging_dir, video_path)
     write_video(video_path, images, fps=5)
 
@@ -183,6 +184,7 @@ def maniskill2_evaluator(model, args):
                 kwargs = dict(
                     model=model,
                     ckpt_path=args.ckpt_path,
+                    step=args.step,
                     robot_name=args.robot,
                     env_name=args.env_name,
                     scene_name=args.scene_name,
